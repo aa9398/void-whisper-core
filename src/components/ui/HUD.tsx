@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/stores/useStore';
 import MagneticButton from './MagneticButton';
+import MainHub from '@/components/hub/MainHub';
 import logo from '@/assets/logo.png';
 
 const HUD = () => {
@@ -10,7 +11,6 @@ const HUD = () => {
     setTransitionPhase('focus');
     setIsZooming(true);
     
-    // Sequence through phases
     setTimeout(() => {
       setTransitionPhase('warp');
     }, 1200);
@@ -24,7 +24,7 @@ const HUD = () => {
   return (
     <div className="hud-layer">
       <AnimatePresence mode="wait">
-        {(transitionPhase === 'idle') && (
+        {transitionPhase === 'idle' && (
           <motion.div
             key="hero-hud"
             initial={{ opacity: 0 }}
@@ -33,21 +33,15 @@ const HUD = () => {
             transition={{ duration: 0.6 }}
             className="absolute inset-0 flex flex-col items-center justify-center"
           >
-            {/* Logo */}
             <motion.div
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
               className="mb-8"
             >
-              <img 
-                src={logo} 
-                alt="ULTRON 9.0" 
-                className="h-12 md:h-16 w-auto opacity-90"
-              />
+              <img src={logo} alt="ULTRON 9.0" className="h-12 md:h-16 w-auto opacity-90" />
             </motion.div>
 
-            {/* Title */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -57,7 +51,6 @@ const HUD = () => {
               ULTRON <span className="accent-primary text-glow-primary">9.0</span>
             </motion.h1>
 
-            {/* Subtitle */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -67,7 +60,6 @@ const HUD = () => {
               NEXT GENERATION SPACE NAVIGATION INTERFACE
             </motion.p>
 
-            {/* Status indicators */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -84,20 +76,14 @@ const HUD = () => {
               </div>
             </motion.div>
 
-            {/* CTA Button */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 0.8 }}
             >
-              <MagneticButton
-                text="ENTER ULTRON 9.0 HUB"
-                onClick={handleEnter}
-                strength={0.3}
-              />
+              <MagneticButton text="ENTER ULTRON 9.0 HUB" onClick={handleEnter} strength={0.3} />
             </motion.div>
 
-            {/* Bottom HUD elements */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -108,7 +94,6 @@ const HUD = () => {
                 <div>LAT: 00.0000° N</div>
                 <div>LON: 00.0000° W</div>
               </div>
-              
               <div className="text-mono text-xs text-dim text-right">
                 <div>VERSION 9.0.1</div>
                 <div>{new Date().toISOString().split('T')[0]}</div>
@@ -117,7 +102,6 @@ const HUD = () => {
           </motion.div>
         )}
 
-        {/* Warp transition overlay */}
         {transitionPhase === 'warp' && (
           <motion.div
             key="warp-overlay"
@@ -131,44 +115,24 @@ const HUD = () => {
               animate={{ scale: [0, 1.5, 0] }}
               transition={{ duration: 2 }}
               className="w-4 h-4 rounded-full bg-accent-primary"
-              style={{
-                boxShadow: '0 0 100px 50px rgba(99, 102, 241, 0.5)',
-              }}
+              style={{ boxShadow: '0 0 100px 50px rgba(99, 102, 241, 0.5)' }}
             />
           </motion.div>
         )}
 
-        {/* Landed state */}
         {transitionPhase === 'landed' && (
           <motion.div
-            key="landed-hud"
+            key="main-hub"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="absolute inset-0 flex flex-col items-center justify-center"
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="absolute inset-0"
           >
-            <motion.div
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.8, duration: 0.8 }}
-              className="text-center"
-            >
-              <h2 className="heading-display text-4xl md:text-6xl text-text-bright mb-4">
-                WELCOME TO THE <span className="accent-cyan text-glow-cyan">HUB</span>
-              </h2>
-              <p className="text-hud mb-8">NAVIGATION INITIALIZED</p>
-              
-              <MagneticButton
-                text="EXPLORE"
-                onClick={() => setTransitionPhase('idle')}
-                strength={0.2}
-              />
-            </motion.div>
+            <MainHub />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Scanlines overlay */}
       <div className="scanlines" />
     </div>
   );

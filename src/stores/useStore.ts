@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 export type TransitionPhase = 'idle' | 'focus' | 'warp' | 'landed';
+export type HubRegion = 'hero' | 'about' | 'events' | 'timeline' | 'team' | 'register' | 'sponsors' | 'contact';
 
 interface CursorPosition {
   x: number;
@@ -33,6 +34,16 @@ interface UltronStore {
   // Audio state (for future)
   isMuted: boolean;
   toggleMute: () => void;
+  
+  // Hub navigation states
+  activeRegion: HubRegion;
+  setActiveRegion: (region: HubRegion) => void;
+  
+  focusedModule: string | null;
+  setFocusedModule: (module: string | null) => void;
+  
+  isPanelExpanded: boolean;
+  setIsPanelExpanded: (expanded: boolean) => void;
 }
 
 export const useStore = create<UltronStore>((set) => ({
@@ -53,4 +64,14 @@ export const useStore = create<UltronStore>((set) => ({
   
   isMuted: true,
   toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
+  
+  // Hub states
+  activeRegion: 'hero',
+  setActiveRegion: (region) => set({ activeRegion: region }),
+  
+  focusedModule: null,
+  setFocusedModule: (module) => set({ focusedModule: module }),
+  
+  isPanelExpanded: false,
+  setIsPanelExpanded: (expanded) => set({ isPanelExpanded: expanded }),
 }));
