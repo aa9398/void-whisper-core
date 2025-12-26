@@ -1,12 +1,35 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Scene from '@/components/canvas/Scene';
+import HUD from '@/components/ui/HUD';
+import CursorTrail from '@/components/ui/CursorTrail';
+import { useCursor } from '@/hooks/useCursor';
+import { useLenis } from '@/hooks/useLenis';
+import { useEffect } from 'react';
 
 const Index = () => {
+  // Initialize cursor tracking
+  useCursor();
+  
+  // Initialize smooth scroll
+  useLenis();
+
+  // Hide default cursor
+  useEffect(() => {
+    document.body.style.cursor = 'none';
+    return () => {
+      document.body.style.cursor = 'auto';
+    };
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="relative min-h-screen overflow-hidden bg-void">
+      {/* WebGL Canvas - The Universe */}
+      <Scene />
+      
+      {/* HUD Overlay */}
+      <HUD />
+      
+      {/* Custom Cursor */}
+      <CursorTrail />
     </div>
   );
 };
