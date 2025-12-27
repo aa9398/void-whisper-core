@@ -14,46 +14,55 @@ const navItems: { id: HubRegion; icon: typeof Home; label: string }[] = [
 ];
 
 const NavigationDock = () => {
-  const { activeRegion, setActiveRegion, cursorPos } = useStore();
+  const { activeRegion, setActiveRegion } = useStore();
+
+  const handleNavClick = (id: HubRegion) => {
+    setActiveRegion(id);
+    // Scroll will be handled by MainHub's useEffect
+  };
 
   return (
-    <motion.div
+    <motion.nav
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.5, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+      transition={{ delay: 0.8, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
     >
-      <div className="glass-panel px-3 py-2 flex items-center gap-1">
-        {navItems.map((item, index) => {
+      <div className="glass-panel px-2 md:px-4 py-2 flex items-center gap-0.5 md:gap-1">
+        {navItems.map((item) => {
           const isActive = activeRegion === item.id;
-          const distanceFromCenter = Math.abs(cursorPos.normalizedX * navItems.length - index);
-          const scale = Math.max(0.8, 1 - distanceFromCenter * 0.05);
           
           return (
             <motion.button
               key={item.id}
-              onClick={() => setActiveRegion(item.id)}
-              whileHover={{ scale: 1.2, y: -5 }}
-              animate={{ scale }}
-              className={`relative p-3 rounded-xl transition-colors ${
+              onClick={() => handleNavClick(item.id)}
+              whileHover={{ scale: 1.15, y: -4 }}
+              whileTap={{ scale: 0.95 }}
+              className={`relative p-2 md:p-3 rounded-xl transition-all duration-300 ${
                 isActive 
-                  ? 'bg-accent-primary/20 border border-accent-primary/30' 
-                  : 'hover:bg-glass-surface border border-transparent'
+                  ? 'bg-accent-primary/20 border border-accent-primary/40' 
+                  : 'hover:bg-glass-surface border border-transparent hover:border-glass-border'
               }`}
             >
-              <item.icon className={`w-5 h-5 ${isActive ? 'accent-primary' : 'text-dim'}`} />
+              <item.icon 
+                className={`w-4 h-4 md:w-5 md:h-5 transition-colors ${
+                  isActive ? 'text-accent-primary' : 'text-dim hover:text-text-bright'
+                }`} 
+              />
               
               {isActive && (
                 <motion.div
                   layoutId="dock-indicator"
-                  className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-accent-primary"
+                  className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-accent-primary"
+                  style={{ boxShadow: '0 0 8px hsl(var(--accent-primary))' }}
                 />
               )}
               
+              {/* Tooltip */}
               <motion.span
                 initial={{ opacity: 0, y: 5 }}
                 whileHover={{ opacity: 1, y: 0 }}
-                className="absolute -top-8 left-1/2 -translate-x-1/2 text-mono text-[9px] text-dim whitespace-nowrap glass-panel px-2 py-1"
+                className="absolute -top-9 left-1/2 -translate-x-1/2 text-mono text-[9px] text-text-bright whitespace-nowrap glass-panel px-2 py-1 pointer-events-none"
               >
                 {item.label}
               </motion.span>
@@ -61,7 +70,7 @@ const NavigationDock = () => {
           );
         })}
       </div>
-    </motion.div>
+    </motion.nav>
   );
 };
 
