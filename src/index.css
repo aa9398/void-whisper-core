@@ -208,13 +208,18 @@
 
 /* HUD Layer */
 .hud-layer {
+  position: relative;
+  min-height: 100vh;
+  z-index: 10;
+}
+
+.hud-layer.is-idle {
   position: fixed;
   inset: 0;
-  z-index: 10;
   pointer-events: none;
 }
 
-.hud-layer > * {
+.hud-layer.is-idle > * {
   pointer-events: auto;
 }
 
