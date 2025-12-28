@@ -22,7 +22,7 @@ const HUD = () => {
   };
 
   return (
-    <div className="hud-layer">
+    <div className={`hud-layer ${transitionPhase === 'idle' || transitionPhase === 'focus' || transitionPhase === 'warp' ? 'is-idle' : ''}`}>
       <AnimatePresence mode="wait">
         {transitionPhase === 'idle' && (
           <motion.div
@@ -126,7 +126,8 @@ const HUD = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="absolute inset-0"
+            className="relative w-full min-h-screen"
+            style={{ pointerEvents: 'auto' }}
           >
             <MainHub />
           </motion.div>

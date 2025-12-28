@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import HeroRegion from './HeroRegion';
 import AboutRegion from './AboutRegion';
@@ -12,40 +12,39 @@ import NavigationDock from './NavigationDock';
 import { useStore, HubRegion } from '@/stores/useStore';
 
 const MainHub = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const { activeRegion, setActiveRegion } = useStore();
+  const isScrollingRef = useRef(false);
   
-  const sectionRefs = useRef<Record<HubRegion, HTMLDivElement | null>>({
-    hero: null,
-    about: null,
-    events: null,
-    timeline: null,
-    team: null,
-    register: null,
-    sponsors: null,
-    contact: null,
-  });
+  const regions: HubRegion[] = ['hero', 'about', 'events', 'timeline', 'team', 'register', 'sponsors', 'contact'];
 
-  // Scroll to section when activeRegion changes
-  useEffect(() => {
-    const section = sectionRefs.current[activeRegion];
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Scroll to section when nav button is clicked
+  const scrollToSection = useCallback((regionId: HubRegion) => {
+    const element = document.getElementById(regionId);
+    if (element) {
+      isScrollingRef.current = true;
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // Reset flag after scroll completes
+      setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 1000);
     }
-  }, [activeRegion]);
+  }, []);
+
+  // Listen for activeRegion changes from nav dock
+  useEffect(() => {
+    scrollToSection(activeRegion);
+  }, [activeRegion, scrollToSection]);
 
   // Update activeRegion based on scroll position
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
     const handleScroll = () => {
-      const scrollPosition = container.scrollTop + window.innerHeight / 3;
+      if (isScrollingRef.current) return;
       
-      const regions: HubRegion[] = ['hero', 'about', 'events', 'timeline', 'team', 'register', 'sponsors', 'contact'];
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
       
       for (let i = regions.length - 1; i >= 0; i--) {
-        const section = sectionRefs.current[regions[i]];
+        const section = document.getElementById(regions[i]);
         if (section && section.offsetTop <= scrollPosition) {
           if (activeRegion !== regions[i]) {
             setActiveRegion(regions[i]);
@@ -55,58 +54,56 @@ const MainHub = () => {
       }
     };
 
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [activeRegion, setActiveRegion]);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeRegion, setActiveRegion, regions]);
 
   return (
     <motion.div
-      ref={containerRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1, delay: 0.3 }}
-      className="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar"
-      style={{ scrollBehavior: 'smooth' }}
+      className="relative w-full"
     >
       {/* Hero Section */}
-      <div ref={(el) => (sectionRefs.current.hero = el)} id="hero">
+      <section id="hero" className="min-h-screen">
         <HeroRegion />
-      </div>
+      </section>
       
       {/* About Section */}
-      <div ref={(el) => (sectionRefs.current.about = el)} id="about">
+      <section id="about" className="min-h-screen">
         <AboutRegion />
-      </div>
+      </section>
       
       {/* Events Section */}
-      <div ref={(el) => (sectionRefs.current.events = el)} id="events">
+      <section id="events" className="min-h-screen">
         <EventsRegion />
-      </div>
+      </section>
       
       {/* Timeline Section */}
-      <div ref={(el) => (sectionRefs.current.timeline = el)} id="timeline">
+      <section id="timeline" className="min-h-screen">
         <TimelineRegion />
-      </div>
+      </section>
       
       {/* Team Section */}
-      <div ref={(el) => (sectionRefs.current.team = el)} id="team">
+      <section id="team" className="min-h-screen">
         <TeamRegion />
-      </div>
+      </section>
       
       {/* Register Section */}
-      <div ref={(el) => (sectionRefs.current.register = el)} id="register">
+      <section id="register" className="min-h-screen">
         <RegisterRegion />
-      </div>
+      </section>
       
       {/* Sponsors Section */}
-      <div ref={(el) => (sectionRefs.current.sponsors = el)} id="sponsors">
+      <section id="sponsors" className="min-h-screen">
         <SponsorsRegion />
-      </div>
+      </section>
       
       {/* Contact Section */}
-      <div ref={(el) => (sectionRefs.current.contact = el)} id="contact">
+      <section id="contact" className="min-h-screen">
         <ContactRegion />
-      </div>
+      </section>
       
       {/* Navigation Dock - Fixed at bottom center */}
       <NavigationDock />
