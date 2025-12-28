@@ -216,11 +216,13 @@
 .hud-layer.is-idle {
   position: fixed;
   inset: 0;
-  pointer-events: none;
 }
 
-.hud-layer.is-idle > * {
+.hud-layer.is-idle button,
+.hud-layer.is-idle a,
+.hud-layer.is-idle [role="button"] {
   pointer-events: auto;
+  cursor: pointer;
 }
 
 /* Scanline effect */

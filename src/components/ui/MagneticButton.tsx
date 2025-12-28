@@ -73,24 +73,35 @@ const MagneticButton = ({
         }}
         whileHover={{
           scale: 1.05,
+          boxShadow: '0 0 30px rgba(99, 102, 241, 0.5)',
         }}
         whileTap={{
           scale: 0.98,
         }}
         className={`
-          glass-panel px-8 py-4
-          text-mono text-text-bright tracking-widest
+          relative px-8 py-4
+          text-mono tracking-widest
           transition-all duration-300
-          hover:border-glass-border-hover
-          hover:shadow-glow-primary
+          rounded-xl
           cursor-pointer
+          text-foreground
           ${className}
         `}
         style={{
-          background: 'rgba(255, 255, 255, 0.03)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          background: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(12px)',
         }}
       >
+        {/* Animated glow effect */}
+        <motion.div
+          className="absolute inset-0 rounded-xl opacity-0"
+          style={{
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
+          }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        />
         <span className="relative z-10">{displayText}</span>
       </motion.button>
     </div>
